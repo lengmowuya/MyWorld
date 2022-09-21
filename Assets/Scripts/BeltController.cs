@@ -42,11 +42,10 @@ public class BeltController : MonoBehaviour
         if(NowActive < 1){
             NowActive = BeltLength;
         }
-        // Debug.Log(NowActive);
         updateActiveBolt(NowActive);
     }
     void updateBoltUI(){
-        for(int i = 0; i < itemList.Length; i++){
+        for(int i = 0; i < BeltLength; i++){
             BoltController Bolt = transform.GetChild(i).GetComponent<BoltController>();
             Bolt.UpdateBoltItem(itemList[i]);
         }
@@ -66,7 +65,6 @@ public class BeltController : MonoBehaviour
         Bolt.LightActive();
     }
     public GameObject GetCube(){
-        // Debug.Log(itemList.Length);
         return itemList[NowActive-1].Prefab;
     }
 }

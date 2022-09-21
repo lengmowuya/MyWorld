@@ -16,6 +16,7 @@ public class DataManager : MonoBehaviour{
     }
     public void SaveCube(){
         // Debug.Log(Application.persistentDataPath);
+        WorldCube = new List<CubeData>();
         GetCubeList();
         if(!Directory.Exists(Application.persistentDataPath + "/game_SaveData")){
             Directory.CreateDirectory(Application.persistentDataPath + "/game_SaveData");
@@ -37,7 +38,6 @@ public class DataManager : MonoBehaviour{
             newData.cubeName = child.GetComponent<CubeSelf>().cubeName;
             WorldCube.Add(newData);
         }
-        // Debug.Log(WorldCube.Count);
     }
     List<CubeData> ReadWorld;
     public void LoadCube(){
@@ -49,23 +49,24 @@ public class DataManager : MonoBehaviour{
 
         string readJson = (string)bf.Deserialize(file);
         ReadWorld = JsonConvert.DeserializeObject<List<CubeData>>(readJson);
-        // Debug.Log(ReadWorld);
         Debug.Log(ReadWorld.Count);
-        // Debug.Log(ReadWorld[0].cubeName);
         file.Close();
-
         DestoryChildren();
-        CubeAssetsManager Ins = CubeAssetsManager.Ins;
         for(int i = 0; i< ReadWorld.Count;i++){
             CubeData cube = ReadWorld[i];
             Vector3 cubePosition = new Vector3(cube.x,cube.y,cube.z);
-            Debug.Log(Ins.getCubeType);
-            GameObject cubeType = Ins.getCubeType(cube.cubeName).Prefab;
+            // 找不到方块就跳出
+            if(CubeAssetsManager.Ins.getCubeType(cube.cubeName) == null) {
+                Debug.Log(cube.cubeName);
+                continue;
+            };
+            GameObject cubeType = CubeAssetsManager.Ins.getCubeType(cube.cubeName).Prefab;
             GameObject newCube = Instantiate(cubeType,cubePosition,Quaternion.Euler(0f, 0f, 0f));
             newCube.transform.SetParent(CubeFather.transform);
         }
 
     }
+
     public void DestoryChildren(){
         foreach(Transform child in CubeFather.transform){
             Destroy(child.gameObject);
